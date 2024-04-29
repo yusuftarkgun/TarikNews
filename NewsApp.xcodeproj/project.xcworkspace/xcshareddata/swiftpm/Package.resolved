@@ -1,0 +1,24 @@
+{
+  "originHash" : "958bde6e8ea1a87498f139bfbab00f785f1c217885ccc305862de3f1599e2570",
+  "pins" : [
+    {
+      "identity" : "rive-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rive-app/rive-ios.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d1bc5d211d567ed380803990cc03d3dcd2589f45"
+      }
+    },
+    {
+      "identity" : "spline-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/splinetool/spline-ios",
+      "state" : {
+        "branch" : "main",
+        "revision" : "9b6bf3bc7ba2276cc93cdd1d3643bbe322f71293"
+      }
+    }
+  ],
+  "version" : 3
+}
