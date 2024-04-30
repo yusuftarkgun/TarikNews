@@ -1,14 +1,10 @@
 import SwiftUI
-import SwiftUIVisualEffects
-import RiveRuntime
 
 struct ContentView: View {
     @State private var articles: [Article] = []
     @State private var selectedCountry: String = "US"
     @State private var selectedCategory: String?
     @State private var backgroundColor: Color = Color(red: 240/255, green: 240/255, blue: 240/255)
-   
-
     
     let countries = ["US", "GB", "TR"]
     let categories = ["science", "general", "sports"]
@@ -22,10 +18,10 @@ struct ContentView: View {
                         ForEach(countries, id: \.self) { country in
                             Button(action: {
                                 selectedCountry = country
-                                fetchNews(country: selectedCountry, category: selectedCategory ?? "") { fetchedArticles in
+                                fetchNews(country: selectedCountry, category: selectedCategory ?? "general") { fetchedArticles in
                                     self.articles = fetchedArticles
                                 }
-                                withAnimation(.easeInOut(duration: 2)) {
+                                withAnimation(.easeInOut(duration: 3)) {
                                     self.backgroundColor = Color(red: CGFloat.random(in: 0...1), green: CGFloat.random(in: 0...1), blue: CGFloat.random(in: 0...1))
                                 }
                             }) {
@@ -56,7 +52,6 @@ struct ContentView: View {
                 }
                 .background(LinearGradient(colors: [.blue, .purple], startPoint: .top, endPoint: .bottom))
                 .cornerRadius(50)
-           
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 20) {
@@ -64,7 +59,6 @@ struct ContentView: View {
                             NavigationLink(destination: Text(article.content ?? "No content")) {
                                 ArticleCard(article: article)
                                     .frame(width: UIScreen.main.bounds.width - 64)
-                                
                             }
                         }
                     }
@@ -73,13 +67,12 @@ struct ContentView: View {
             }
             .padding()
             .background(LinearGradient(colors: [.purple, .blue], startPoint: .top, endPoint: .trailing))
-            RiveViewModel(fileName: "shapes").view()
-                .ignoresSafeArea()
-                .blur(radius: 20)
-     
-            
             .onAppear {
-                fetchNews(country: selectedCountry, category: "general") { fetchedArticles in
+                // Varsayılan olarak ABD'yi seç
+                selectedCountry = "US"
+                // Seçilen kategori yoksa "general" kategorisini kullan
+                let category = selectedCategory ?? "general"
+                fetchNews(country: selectedCountry, category: category) { fetchedArticles in
                     self.articles = fetchedArticles
                 }
                 self.backgroundColor = Color(red: 240/255, green: 240/255, blue: 240/255)
@@ -89,39 +82,37 @@ struct ContentView: View {
 
     func fetchNews(country: String, category: String, completion: @escaping ([Article]) -> Void) {
         let apiKey = "ad5b71c2807648f8b6a55db797b1d022"
-       
-         
-         
-         let urlString = "https://newsapi.org/v2/top-headlines?country=\(country)&category=\(category)&apiKey=\(apiKey)"
-         
-         guard let url = URL(string: urlString) else {
-             print("Invalid URL")
-             return
-         }
-         
-         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-             if let error = error {
-                 print("Network error: \(error)")
-                 return
-             }
-             
-             guard let data = data else {
-                 print("No data received")
-                 return
-             }
-             
-             do {
-                 let response = try JSONDecoder().decode(NewsResponse.self, from: data)
-                 DispatchQueue.main.async {
-                     completion(response.articles)
-                 }
-             } catch {
-                 print("Error parsing JSON: \(error)")
-             }
-         }
-         task.resume()
-     }
- }
+        let urlString = "https://newsapi.org/v2/top-headlines?country=\(country)&category=\(category)&apiKey=\(apiKey)"
+        
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print("Network error: \(error)")
+                return
+            }
+            
+            guard let data = data else {
+                print("No data received")
+                return
+            }
+            
+            do {
+                let response = try JSONDecoder().decode(NewsResponse.self, from: data)
+                DispatchQueue.main.async {
+                    completion(response.articles)
+                }
+            } catch {
+                print("Error parsing JSON: \(error)")
+            }
+        }
+        task.resume()
+    }
+}
+
 
 
 struct ContentView_Previews: PreviewProvider {
@@ -132,29 +123,26 @@ struct ContentView_Previews: PreviewProvider {
 
 struct ArticleCard: View {
     let article: Article
-    @State private var phase: CGAffineTransform = .identity
+    
+    @State private var image: UIImage?
     
     var body: some View {
         ScrollView(.horizontal) {
-            LazyHStack() {
+            LazyHStack {
                 RoundedRectangle(cornerRadius: 25)
                     .fill(.ultraThinMaterial)
                     .background(.ultraThinMaterial)
-                
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .containerRelativeFrame(.horizontal)
                     .containerRelativeFrame(.horizontal)
                     .transition(.scale)
-                
-                
-                
                     .overlay(
                         VStack(alignment: .leading, spacing: 6) {
-                            if let imageURLString = article.urlToImage, let imageURL = URL(string: imageURLString), let imageData = try? Data(contentsOf: imageURL), let uiImage = UIImage(data: imageData) {
-                                Image(uiImage: uiImage)
+                            if let image = image {
+                                Image(uiImage: image)
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(width: UIScreen.main.bounds.width - 32, height: 300)
+                                    .frame(width: UIScreen.main.bounds.width - 32, height: 200)
                                     .clipped()
                             } else {
                                 Rectangle()
@@ -162,28 +150,29 @@ struct ArticleCard: View {
                                     .frame(height: 200)
                             }
                             
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(article.title)
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
-                                    .padding(.leading)
-                                
-                                if let description = article.description {
-                                    Text(description)
-                                        .font(.subheadline)
-                                        .foregroundColor(.white)
+                     
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(article.title)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
                                         .padding(.leading)
+                                    
+                                    if let description = article.description {
+                                        Text(description)
+                                            .font(.subheadline)
+                                            .foregroundColor(.white)
+                                            .padding(.leading)
+                                    }
+                                    
+                                    if let sourceName = article.source.name {
+                                        Text(sourceName)
+                                            .font(.caption)
+                                            .foregroundColor(.white)
+                                            .padding(.leading)
+                                            .padding(.horizontal)
+                                    }
                                 }
-                                
-                                if let sourceName = article.source.name {
-                                    Text(sourceName)
-                                        .font(.caption)
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal)
-                                }
-                                
-                                
-                            }
+                            
                             
                             HStack {
                                 Spacer()
@@ -204,8 +193,6 @@ struct ArticleCard: View {
                             }
                             .padding(.horizontal)
                             .background(Color.clear)
-
-                            
                             
                             Text(article.publishedAt ?? "")
                                 .font(.caption)
@@ -213,13 +200,30 @@ struct ArticleCard: View {
                                 .padding(.leading)
                                 .padding([.leading, .bottom])
                         }
-                            .contentMargins(20)
-                            .scrollIndicators(.hidden)
-                            .background(Color.clear)
-                            .cornerRadius(12)
-                            .shadow(radius: 20)
+                        .contentMargins(20)
+                        .scrollIndicators(.hidden)
+                        .background(Color.clear)
+                        .cornerRadius(12)
+                        .shadow(radius: 20)
                     )
+                    .onAppear {
+                        if image == nil { // Resim daha önceden yüklenmediyse
+                                                  loadImage(from: article.urlToImage)
+                                              }
+                    }
             }
         }
-    }}
-
+    }
+    
+    private func loadImage(from urlString: String?) {
+        guard let urlString = urlString, let url = URL(string: urlString) else { return }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            if let uiImage = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.image = uiImage
+                }
+            }
+        }.resume()
+    }
+}

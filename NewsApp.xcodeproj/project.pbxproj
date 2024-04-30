@@ -49,6 +49,7 @@
 		AD93D56C2BDFBBC70090EC1B /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-SemiBold.ttf"; sourceTree = "<group>"; };
 		AD93D56D2BDFBBC70090EC1B /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		AD93D5722BDFD2AD0090EC1B /* shareArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = shareArticle.swift; sourceTree = "<group>"; };
+		AD93D5742BE0D3360090EC1B /* Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Header.h; sourceTree = "<group>"; };
 		AD97A1CE2BDA933A00603A90 /* ScrollTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollTransitionView.swift; sourceTree = "<group>"; };
 		ADD4CE362BD8E9B300992F9E /* NewsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADD4CE392BD8E9B300992F9E /* NewsAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsAppApp.swift; sourceTree = "<group>"; };
@@ -110,6 +111,7 @@
 		ADD4CE2D2BD8E9B300992F9E = {
 			isa = PBXGroup;
 			children = (
+				AD93D5742BE0D3360090EC1B /* Header.h */,
 				ADD4CE382BD8E9B300992F9E /* NewsApp */,
 				ADD4CE372BD8E9B300992F9E /* Products */,
 			);
