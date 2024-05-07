@@ -1,17 +1,10 @@
-//
-//  API.swift
-//  NewsApp
-//
-//  Created by Yusuf Tarık Gün on 24.04.2024.
-//
-
 import Foundation
-
 
 struct API {
     public func fetchNews(category: String, country: String, completion: @escaping ([Article]) -> Void) {
-        let apiKey = "ad5b71c2807648f8b6a55db797b1d022"
-        let urlString = "https://newsapi.org/v2/top-headlines?category=\(category)&apiKey=\(apiKey)"
+        let apiKey = "2c7f4e3ab76a474b8f4f1c4f476c4cfc"
+        let urlString = "https://newsapi.org/v2/top-headlines?country=\(country)&category=\(category)&apiKey=\(apiKey)"
+
         
         if let url = URL(string: urlString) {
             let task = URLSession.shared.dataTask(with: url) { (data, response, error) in

@@ -21,7 +21,7 @@ struct ScrollTransitionView: View {
                 ForEach(cards.indices) { index in
                     RoundedRectangle(cornerRadius: 25)
                         .fill(Color.clear)
-                        .background(.ultraThinMaterial)
+                   .background(.ultraThinMaterial)
                      
                         .clipShape(RoundedRectangle(cornerRadius: 25))
                         .containerRelativeFrame(.horizontal)
