@@ -1,26 +1,21 @@
-//
-//  ArticleCardView.swift
-//  NewsApp
-//
-//  Created by Yusuf Tarık Gün on 6.05.2024.
-//
-
 import SwiftUI
+import RiveRuntime
 
 struct ArticleCard: View {
     
     let article: Article
     @State private var image: UIImage?
-    @State private var articles: [Article] = []
-    @State private var isBookmarked = false
+    @State private var isBookmarked: Bool = false
+    
+
     
     var body: some View {
         
         ScrollView(.horizontal) {
             LazyHStack {
                 RoundedRectangle(cornerRadius: 25)
-                 //  .fill(Color.ultraThinMaterial)
-                   // .background(Color.ultraThinMaterial)
+                    .fill(Color(UIColor(red: 0.2, green: 0.3, blue: 0.4, alpha: 1.0)))
+                    .background((Color(UIColor(red: 0.2, green: 0.3, blue: 0.4, alpha: 1.0))))
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .containerRelativeFrame(.horizontal)
                     .containerRelativeFrame(.horizontal)
@@ -34,8 +29,7 @@ struct ArticleCard: View {
                                     .frame(width: UIScreen.main.bounds.width - 32, height: 200)
                                     .clipped()
                             } else {
-                                Rectangle()
-                                    .fill(Color.gray)
+                                WaitingView()
                                     .frame(height: 200)
                             }
                             
@@ -64,12 +58,14 @@ struct ArticleCard: View {
                                 Spacer()
                                 
                                 Button(action: {
+                                    toggleBookmark()
                                     isBookmarked.toggle()
                                 }) {
                                     Image(systemName: isBookmarked ? "star.fill" : "star")
-                                    .foregroundColor(.yellow)
+                                        .foregroundColor(.yellow)
                                 }
                                 .buttonStyle(.bordered)
+                                
                                 Button(action: {
                                     
                                     let activityViewController = UIActivityViewController(activityItems: [article.url, article.title, article.description ?? ""], applicationActivities: nil)
@@ -77,7 +73,6 @@ struct ArticleCard: View {
                                 }) {
                                     Image(systemName: "square.and.arrow.up")
                                 }
-
                                 .buttonStyle(.bordered)
                             }
                             .padding(.horizontal)
@@ -96,9 +91,8 @@ struct ArticleCard: View {
                         .shadow(radius: 20)
                     )
                     .onAppear {
-                        if image == nil {                             loadImage(from: article.urlToImage)
+                        if image == nil { loadImage(from: article.urlToImage) }
                     }
-                }
             }
         }
     }
@@ -115,5 +109,32 @@ struct ArticleCard: View {
         }
         .resume()
     }
-}
+    
+    private func toggleBookmark() {
+        let userDefaults = UserDefaults.standard
+        var likedArticles = userDefaults.array(forKey: "LikedArticles") as? [String] ?? []
 
+        if isBookmarked {
+          
+            if let index = likedArticles.firstIndex(of: article.id.uuidString) {
+                likedArticles.remove(at: index)
+                userDefaults.set(likedArticles, forKey: "LikedArticles")
+                print("Bookmark removed for article: \(article.id)")
+            }
+        } else {
+           
+            likedArticles.append(article.id.uuidString)
+            userDefaults.set(likedArticles, forKey: "LikedArticles")
+            print("Bookmark added for article: \(article.id)")
+        }
+    }
+
+
+    
+    private func isArticleBookmarked(_ article: Article) -> Bool {
+        let userDefaults = UserDefaults.standard
+        let likedArticles = userDefaults.array(forKey: "LikedArticles") as? [String] ?? []
+        return likedArticles.contains(article.id.uuidString)
+    }
+    
+}

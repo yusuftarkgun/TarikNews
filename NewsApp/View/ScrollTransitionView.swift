@@ -1,4 +1,4 @@
-import SwiftUI
+/*import SwiftUI
 
 struct CardItem: Identifiable {
         let id: Int
@@ -133,3 +133,4 @@ struct ScrollTransitionView_Previews: PreviewProvider {
     }
 }
 
+*/

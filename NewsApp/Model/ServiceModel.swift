@@ -2,11 +2,11 @@ import Foundation
 
 struct NewsResponse: Codable {
     let status: String
-    let totalResults: Int
-    let articles: [Article]
+    let totalResults: Int?
+    let articles: [Article]?
 }
-
-struct Article: Codable {
+struct Article: Codable, Identifiable {
+    let id: UUID = UUID()
     let source: Source
     let author: String?
     let title: String
@@ -16,6 +16,7 @@ struct Article: Codable {
     let publishedAt: String?
     let content: String?
 }
+
 
 struct Source: Codable {
     let id: String?

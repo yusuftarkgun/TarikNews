@@ -2,6 +2,7 @@ import SwiftUI
 import RiveRuntime
 
 struct SideMenu: View {
+    
     var onSelection: (String, String?) -> Void
     @State private var selectedCountry: String = "US"
     @State private var selectedCategory: String?
@@ -15,6 +16,7 @@ struct SideMenu: View {
     
     var body: some View {
         ZStack{
+            
             RiveViewModel(fileName: "shapes").view()
                 .ignoresSafeArea()
                 .blur(radius: 20)
@@ -23,8 +25,7 @@ struct SideMenu: View {
                         .blur(radius: 50)
                         .offset(x:200, y: 100)
                 )
-            
-            
+
             VStack(alignment: .leading, spacing: 5) {
                 
                 HStack {
@@ -51,7 +52,8 @@ struct SideMenu: View {
                         fetchNews(country: selectedCountry, category: selectedCategory ?? "") { fetchedArticles in
                             self.articles = fetchedArticles
                         }
-                    }) {
+                    })
+                    {
                         HStack {
                             Image(systemName: "flag")
                             Text(country)
@@ -117,7 +119,7 @@ struct SideMenu: View {
 }
 
 func fetchNews(country: String, category: String, completion: @escaping ([Article]) -> Void) {
-    let apiKey = "2c7f4e3ab76a474b8f4f1c4f476c4cfc"
+    let apiKey = "8931b960e2cc41b9911a55ba01e1059e"
     let urlString = "https://newsapi.org/v2/top-headlines?country=\(country)&category=\(category)&apiKey=\(apiKey)"
     
     guard let url = URL(string: urlString) else {
@@ -139,8 +141,8 @@ func fetchNews(country: String, category: String, completion: @escaping ([Articl
         do {
             let response = try JSONDecoder().decode(NewsResponse.self, from: data)
             DispatchQueue.main.async {
-                print("Güncellenen makaleler: \(response.articles)")
-                completion(response.articles) 
+             
+                completion(response.articles!) 
             }
         } catch {
             print("Error parsing JSON: \(error)")
@@ -148,7 +150,7 @@ func fetchNews(country: String, category: String, completion: @escaping ([Articl
     }
     task.resume()
 }
-// SideMenu önizlemesi
+
 struct SideMenu_Previews: PreviewProvider {
     static var previews: some View {
         SideMenu { country, category in

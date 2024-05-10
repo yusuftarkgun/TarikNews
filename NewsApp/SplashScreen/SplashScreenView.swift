@@ -11,14 +11,14 @@ struct SplashScreenView: View {
         else {
             SplineViewWrapper(isActive: $isActive)
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 8.0) {
                         self.isActive = true
                 }
             }
         }
     }
 }
-
+    
 struct SplineViewWrapper: View {
     @Binding var isActive: Bool
 

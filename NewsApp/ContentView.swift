@@ -2,7 +2,6 @@
 
 import SwiftUI
 import RiveRuntime
-import SafariServices
 
 struct ContentView: View {
     @State private var likedArticles: [Article] = []
@@ -21,7 +20,6 @@ struct ContentView: View {
     let button2 = RiveViewModel(fileName: "icons", stateMachineName: "SEARCH_Interactivity", artboardName: "SEARCH")
 
     var body: some View {
-        
         VStack {
             NavigationView {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -29,18 +27,20 @@ struct ContentView: View {
                         ForEach(articles, id: \.url) { article in
                             Button(action: {
                                 guard let url = URL(string: article.url) else { return }
-                                                               UIApplication.shared.open(url)
-                                                        }){
-                                ArticleCard(article: article)
-                                    .frame(width: UIScreen.main.bounds.width - 64)
-                                    .rotation3DEffect(
-                                        .degrees(isOpen ? -30 : 0),
-                                        axis: (x: 0, y: 1, z: 0),
-                                        anchor: .center,
-                                        perspective: 0.9
-                                    )
-                                    .scaleEffect(isOpen ? 0.9 : 1)
-                                    .offset(x: isOpen ? 225 : 0)
+                                UIApplication.shared.open(url)
+                            }) {
+                                if selectedTab == .user {
+                                    ArticleCard(article: article)
+                                        .frame(width: UIScreen.main.bounds.width - 64)
+                                        .rotation3DEffect(
+                                            .degrees(isOpen ? -30 : 0),
+                                            axis: (x: 0, y: 1, z: 0),
+                                            anchor: .center,
+                                            perspective: 0.9
+                                        )
+                                        .scaleEffect(isOpen ? 0.9 : 1)
+                                        .offset(x: isOpen ? 225 : 0)
+                                }
                             }
                         }
                     }
@@ -49,74 +49,73 @@ struct ContentView: View {
                 .padding()
                 .background(LinearGradient(colors: [.white, .blue], startPoint: .top, endPoint: .trailing))
                 .onAppear {
-                    
-                    fetchNews(country: selectedCountry, category: selectedCategory ?? "") {
-                        fetchedArticles in
+                    fetchNews(country: selectedCountry, category: selectedCategory ?? "") { fetchedArticles in
                         DispatchQueue.main.async {
-                                   self.articles = fetchedArticles
-                               }
+                            self.articles = fetchedArticles
+                        }
                     }
                 }
             }
             .overlay(
                 ZStack {
-                    
-                    // Side Menu
-                    SideMenu(){ country, category in
-                        // Kullanıcı ülke veya kategori seçtiğinde haberleri güncelle
-                        fetchNews(country: country, category: category ?? "") { fetchedArticles in
-                            DispatchQueue.main.async {
-                                self.articles = fetchedArticles
+                    if selectedTab == .user {
+                  
+                        SideMenu(){ country, category in
+                   
+                            fetchNews(country: country, category: category ?? "") { fetchedArticles in
+                                DispatchQueue.main.async {
+                                    self.articles = fetchedArticles
+                                }
                             }
                         }
-                    }
-                    
-                    .opacity(isOpen ? 1 : 0)
-                    .offset(x: isOpen ? 0 : -100)
-                    .rotation3DEffect(
-                        .degrees(isOpen ? 0 : 30),
-                        axis: (x: 0, y: 1, z: 0)
-                    )
-                    .safeAreaInset(edge: .top) {
-                        Color.clear.frame(height: 104)
-                    }
-                    .safeAreaInset(edge: .bottom) {
-                        Color.clear.frame(height: 80)
-                    }
-                    .mask(RoundedRectangle(cornerRadius: 50, style: .continuous))
-                    .rotation3DEffect(
-                        .degrees(isOpen ? 30 : 0),
-                        axis: (x: 0, y: 1, z: 0)
-                    )
-                    .offset(x: isOpen ? 5 : 0)
-                    .scaleEffect(isOpen ? 0.9 : 1)
-                    .ignoresSafeArea()
-
-                    button2.view()
-                        .frame(width: 44, height: 44)
-                        .mask(Circle())
-                        .shadow(color: Color("Shadow").opacity(0.2), radius: 5, x: 0, y: 5)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                        .padding()
-                        .onTapGesture {
-                            isSearchBarVisible.toggle()
+                        .opacity(isOpen ? 1 : 0)
+                        .offset(x: isOpen ? 0 : -100)
+                        .rotation3DEffect(
+                            .degrees(isOpen ? 0 : 30),
+                            axis: (x: 0, y: 1, z: 0)
+                        )
+                        .safeAreaInset(edge: .top) {
+                            Color.clear.frame(height: 104)
                         }
-
-                    button.view()
-                        .background(.white)
-                        .frame(width: 44, height: 44)
-                        .mask(Circle())
-                        .shadow(color: Color("Shadow").opacity(0.2), radius: 5, x: 0, y: 5)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .padding()
-                        .offset(x: isOpen ? 216 : 0)
-                        .onTapGesture {
-                            button.setInput("isOpen", value: isOpen)
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                                isOpen.toggle()
+                        .safeAreaInset(edge: .bottom) {
+                            Color.clear.frame(height: 80)
+                        }
+                        .mask(RoundedRectangle(cornerRadius: 50, style: .continuous))
+                        .rotation3DEffect(
+                            .degrees(isOpen ? 30 : 0),
+                            axis: (x: 0, y: 1, z: 0)
+                        )
+                        .offset(x: isOpen ? 5 : 0)
+                        .scaleEffect(isOpen ? 0.9 : 1)
+                        .ignoresSafeArea()
+                    }
+                    if selectedTab == .user {
+                        button.view()
+                            .background(.white)
+                            .frame(width: 44, height: 44)
+                            .mask(Circle())
+                            .shadow(color: Color("Shadow").opacity(0.2), radius: 5, x: 0, y: 5)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                            .padding()
+                            .offset(x: isOpen ? 216 : 0)
+                            .onTapGesture {
+                                button.setInput("isOpen", value: isOpen)
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                                    isOpen.toggle()
+                                }
                             }
-                        }
-                    TabBar(selectedTab: selectedTab)
+                    }
+
+                    switch selectedTab {
+                    case .user:
+                        
+                        Text("")
+                    case .likeStar:
+                        LikeStarView()
+                    case .search:
+                        SearchView()
+                    }
+                    TabBar(selectedTab: $selectedTab)
                         .offset(y: isOpen ? 300 : 0)
                 }
             )
@@ -131,3 +130,4 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+private func performSearch() {}

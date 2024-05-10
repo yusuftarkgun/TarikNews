@@ -9,7 +9,7 @@ import SwiftUI
 import RiveRuntime
 
 struct TabBar: View {
-    @State var selectedTab: Tab = .user
+    @Binding var selectedTab: Tab
     let icon = RiveViewModel(fileName: "icons", stateMachineName: "CHAT_Interactivity", artboardName: "CHAT")
     
     var body: some View {
@@ -60,11 +60,7 @@ struct TabBar: View {
     }
         
         }
-struct TabBar_Previews: PreviewProvider{
-    static var previews: some View{
-        TabBar()
-    }
-}
+
 struct TabItem: Identifiable{
     var id = UUID()
     var icon: RiveViewModel

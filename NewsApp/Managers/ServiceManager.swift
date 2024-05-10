@@ -2,7 +2,7 @@ import Foundation
 
 struct API {
     public func fetchNews(category: String, country: String, completion: @escaping ([Article]) -> Void) {
-        let apiKey = "2c7f4e3ab76a474b8f4f1c4f476c4cfc"
+        let apiKey = "8931b960e2cc41b9911a55ba01e1059e"
         let urlString = "https://newsapi.org/v2/top-headlines?country=\(country)&category=\(category)&apiKey=\(apiKey)"
 
         
